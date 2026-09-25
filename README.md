@@ -1,1 +1,516 @@
-# Fotowedstrijd
+[index.html](https://github.com/user-attachments/files/32641575/index.html)
+# Fotowedstrijd<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>De Grote Amersfoort Foto Battle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF2F6; --surface:#FFFFFF; --ink:#1B2740; --muted:#56627A; --line:#D5DCE6;
+  --amber:#E9A31B; --amber-soft:#FCEBC0; --brick:#B3261E; --brick-soft:#F8DEDB;
+  --bar:#1B2740; --bar-ink:#FFFFFF; --done:#E7F1E4; --done-ink:#2E6B2A;
+  --display:"Bricolage Grotesque", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#101626; --surface:#1A2236; --ink:#EDF1F7; --muted:#A3AEC3; --line:#2E3A52;
+    --amber:#F2B233; --amber-soft:#3B3016; --brick:#FF7A6E; --brick-soft:#3E1F1E;
+    --bar:#0B1120; --bar-ink:#EDF1F7; --done:#1E3322; --done-ink:#9AD892;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#101626; --surface:#1A2236; --ink:#EDF1F7; --muted:#A3AEC3; --line:#2E3A52;
+  --amber:#F2B233; --amber-soft:#3B3016; --brick:#FF7A6E; --brick-soft:#3E1F1E;
+  --bar:#0B1120; --bar-ink:#EDF1F7; --done:#1E3322; --done-ink:#9AD892;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 118px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 var(--body);-webkit-text-size-adjust:100%}
+img{max-width:100%}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+
+/* sticky score bar */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bar);color:var(--bar-ink);box-shadow:0 2px 0 rgba(0,0,0,.15)}
+.bar-row{display:flex;align-items:center;gap:12px;max-width:640px;margin:0 auto;padding:10px 16px 8px}
+.bar-team{flex:1;min-width:0}
+.bar-team small{display:block;font-size:13px;opacity:.75}
+.bar-team strong{display:block;font-family:var(--display);font-weight:700;font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-score{text-align:right;font-family:var(--display);line-height:1}
+.bar-score b{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums}
+.bar-score span{display:block;font-size:13px;opacity:.75;font-family:var(--body)}
+.glass{width:34px;height:48px;flex:none}
+.glass .outline{fill:none;stroke:currentColor;stroke-width:2.2;stroke-linejoin:round}
+.glass .beer{transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+.chips{display:flex;gap:6px;overflow-x:auto;max-width:640px;margin:0 auto;padding:0 16px 10px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips a{flex:none;color:var(--bar-ink);text-decoration:none;font-size:14px;padding:6px 12px;border-radius:999px;border:1px solid rgba(255,255,255,.28);white-space:nowrap}
+.chips a .n{opacity:.7;margin-left:4px;font-variant-numeric:tabular-nums}
+.chips a.full{background:var(--amber);border-color:var(--amber);color:#1B2740}
+.chips a.full .n{opacity:1}
+
+main{max-width:640px;margin:0 auto;padding:0 16px 48px}
+
+.hero{padding:28px 0 8px}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,10vw,52px);line-height:.95;letter-spacing:-.02em;margin:0 0 12px}
+.hero p{margin:0 0 8px;color:var(--muted);max-width:34em}
+
+.team{background:var(--surface);border:2px solid var(--ink);border-radius:14px;padding:14px;margin:18px 0}
+.team label{display:block;font-weight:700;margin-bottom:6px}
+.team input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:18px}
+
+.legend{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center;margin:16px 0 4px;font-size:15px}
+
+.route{margin:20px 0 8px;padding:0;list-style:none;border-left:3px solid var(--line);padding-left:16px}
+.route li{position:relative;padding:3px 0;color:var(--muted);font-size:15px}
+.route li::before{content:"";position:absolute;left:-22px;top:12px;width:9px;height:9px;border-radius:50%;background:var(--line)}
+.route li.stop{color:var(--ink);font-weight:700;font-size:16px}
+.route li.stop::before{background:var(--amber);width:13px;height:13px;left:-24px;top:9px}
+.route time{font-variant-numeric:tabular-nums;margin-right:8px;color:var(--brick)}
+
+section{margin-top:34px}
+.sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-bottom:2px solid var(--ink);padding-bottom:6px;margin-bottom:10px}
+.sec-head h2{font-family:var(--display);font-weight:800;font-size:26px;line-height:1.1;margin:0}
+.sec-head h2 small{display:block;font-family:var(--body);font-weight:400;font-size:15px;color:var(--muted);margin-top:2px}
+.sec-head .tally{font-size:14px;color:var(--muted);white-space:nowrap;font-variant-numeric:tabular-nums}
+.intro{color:var(--muted);margin:0 0 10px;font-size:15px}
+
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.task{display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:background .2s}
+.task.is-done{background:var(--done);border-color:transparent}
+.task label{flex:1;display:flex;gap:12px;align-items:flex-start;padding:12px;cursor:pointer;min-height:56px}
+.task input[type=checkbox]{position:absolute;opacity:0;width:1px;height:1px}
+.box{flex:none;width:28px;height:28px;border:2px solid var(--muted);border-radius:8px;display:grid;place-items:center;margin-top:1px}
+.box svg{width:18px;height:18px;opacity:0;transform:scale(.4);transition:transform .25s cubic-bezier(.3,1.6,.5,1),opacity .15s}
+.task input:checked + .box{background:var(--done-ink);border-color:var(--done-ink)}
+.task input:checked + .box svg{opacity:1;transform:scale(1)}
+.task input:focus-visible + .box{outline:3px solid var(--amber);outline-offset:2px}
+.txt{flex:1}
+.pts{flex:none;align-self:flex-start;min-width:30px;height:30px;padding:0 6px;border-radius:999px;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:16px}
+.p1{background:var(--bg);color:var(--ink);border:1px solid var(--line)}
+.p2{background:var(--amber-soft);color:var(--ink)}
+.p3{background:var(--brick);color:#fff}
+.p5{background:var(--amber);color:#1B2740}
+.cam{flex:none;width:58px;border:0;border-left:1px solid var(--line);background:transparent;display:grid;place-items:center;cursor:pointer;padding:0}
+.task.is-done .cam{border-left-color:rgba(0,0,0,.08)}
+.cam svg{width:24px;height:24px;stroke:var(--muted)}
+.cam img{width:46px;height:46px;object-fit:cover;border-radius:8px}
+
+.note{background:var(--amber-soft);border-radius:12px;padding:12px 14px;font-size:15px;margin:0 0 10px}
+
+.final{margin-top:40px;background:var(--bar);color:var(--bar-ink);border-radius:18px;padding:22px 18px}
+.final h2{font-family:var(--display);font-weight:800;font-size:26px;margin:0 0 4px}
+.final .big{font-family:var(--display);font-weight:800;font-size:72px;line-height:1;font-variant-numeric:tabular-nums;margin:10px 0}
+.final dl{display:grid;grid-template-columns:1fr auto;gap:4px 12px;margin:0;font-size:16px}
+.final dd{margin:0;font-variant-numeric:tabular-nums;text-align:right}
+.final p{opacity:.8;font-size:14px;margin:14px 0 0}
+
+.foot{margin-top:28px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;font-size:14px;color:var(--muted)}
+.reset{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;cursor:pointer}
+.reset.armed{background:var(--brick);border-color:var(--brick);color:#fff}
+
+/* photo dialog */
+dialog{border:0;padding:0;border-radius:16px;background:var(--surface);color:var(--ink);width:min(92vw,560px);max-height:88vh}
+dialog::backdrop{background:rgba(10,15,30,.7)}
+.dlg{padding:14px}
+.dlg img{display:block;width:100%;max-height:60vh;object-fit:contain;border-radius:10px;background:var(--bg)}
+.dlg p{margin:10px 0}
+.dlg-actions{display:flex;gap:8px;flex-wrap:wrap}
+.dlg-actions button{flex:1;min-width:120px;padding:12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer}
+.dlg-actions .primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.dlg-actions .danger{color:var(--brick)}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 20px);transform:translate(-50%,150%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:15px;transition:transform .3s;z-index:20;white-space:nowrap}
+.toast.show{transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{transition:none!important;animation:none!important}
+  html{scroll-behavior:auto}
+}
+@media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth} }
+</style>
+</head>
+<body>
+
+<header class="bar" aria-label="Score">
+  <div class="bar-row">
+    <svg class="glass" viewBox="0 0 40 56" aria-hidden="true">
+      <defs><clipPath id="gclip"><path d="M5 4 L35 4 L31.5 51 Q31.3 54 28.5 54 L11.5 54 Q8.7 54 8.5 51 Z"/></clipPath></defs>
+      <g clip-path="url(#gclip)">
+        <g class="beer" id="beer" style="transform:translateY(60px)">
+          <rect x="0" y="0" width="40" height="7" fill="#FFF7E0"/>
+          <rect x="0" y="6" width="40" height="60" fill="var(--amber)"/>
+        </g>
+      </g>
+      <path class="outline" d="M5 4 L35 4 L31.5 51 Q31.3 54 28.5 54 L11.5 54 Q8.7 54 8.5 51 Z"/>
+    </svg>
+    <div class="bar-team"><small>Team</small><strong id="barTeam">Nog geen naam</strong></div>
+    <div class="bar-score" aria-live="polite"><b id="barScore">0</b><span>punten</span></div>
+  </div>
+  <nav class="chips" id="chips" aria-label="Rondes"></nav>
+</header>
+
+<main>
+  <div class="hero">
+    <h1>De Grote Amersfoort Foto Battle</h1>
+    <p>Twee teams, dezelfde foto-opdrachten, één biertour. Je hoeft niet voor elke opdracht te stoppen: maak de foto zodra je iets tegenkomt en vink hem af.</p>
+  </div>
+
+  <div class="team">
+    <label for="teamName">Hoe heet jullie team?</label>
+    <input id="teamName" type="text" autocomplete="off" maxlength="40" placeholder="Bijvoorbeeld: De Koppelpoorters">
+  </div>
+
+  <div class="legend" aria-label="Puntentelling">
+    <span class="pts p1">1</span><span>eenvoudige opdracht</span>
+    <span class="pts p2">2</span><span>creatieve of moeilijkere opdracht</span>
+    <span class="pts p3">3</span><span>echte challenge</span>
+    <span class="pts p5">⭐</span><span>bonuspunten in de finale</span>
+  </div>
+
+  <section id="route" aria-labelledby="routeH">
+    <div class="sec-head"><h2 id="routeH">Route<small>De route bepaalt de rondes</small></h2></div>
+    <ol class="route">
+      <li class="stop"><time>13:00</time>Bombari</li>
+      <li>Wandeling richting binnenstad</li>
+      <li>Onze Lieve Vrouwetoren</li>
+      <li>Koppelpoort</li>
+      <li class="stop"><time>15:30</time>De Drie Ringen</li>
+      <li>Krommestraat</li>
+      <li>Hof</li>
+      <li class="stop"><time>17:30</time>Van Zanten</li>
+    </ol>
+  </section>
+
+  <div id="sections"></div>
+
+  <section id="bonus" aria-labelledby="bonusH">
+    <div class="sec-head"><h2 id="bonusH">⭐ Finale<small>Bonuspunten</small></h2><span class="tally" id="bonusTally"></span></div>
+    <p class="note">Heeft jullie team een categorie gewonnen? Vink hem dan hier aan.</p>
+    <ul class="tasks" id="bonusList"></ul>
+  </section>
+
+  <div class="final" id="eind">
+    <h2>🏆 Eindscore</h2>
+    <div class="big" id="finalScore">0</div>
+    <dl>
+      <dt>Opdrachten</dt><dd id="fTasks">0</dd>
+      <dt>Bonuspunten</dt><dd id="fBonus">0</dd>
+      <dt>Foto's toegevoegd</dt><dd id="fPhotos">0</dd>
+    </dl>
+    <p>Laat dit scherm aan de jury zien. Het team met de meeste punten wint.</p>
+  </div>
+
+  <div class="foot">
+    <span>Je vinkjes en foto's worden alleen op deze telefoon bewaard.</span>
+    <button class="reset" id="reset" type="button">Alles wissen en opnieuw beginnen</button>
+  </div>
+</main>
+
+<input type="file" id="fileInput" accept="image/*" hidden>
+
+<dialog id="dlg">
+  <div class="dlg">
+    <img id="dlgImg" alt="">
+    <p id="dlgText"></p>
+    <div class="dlg-actions">
+      <button type="button" id="dlgReplace">Andere foto</button>
+      <button type="button" class="danger" id="dlgDelete">Foto verwijderen</button>
+      <button type="button" class="primary" id="dlgClose">Sluiten</button>
+    </div>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const ROUNDS = [
+  { id:"r1", nav:"Ronde 1", title:"Ronde 1", place:"Bombari", time:"13:00", tasks:[
+    {p:1, t:"Maak een foto waarop iedereen iets typisch Italiaans uitbeeldt."},
+    {p:2, t:"Maak een foto waarin iedereen midden in een actie lijkt te zijn bevroren. Niemand mag normaal staan of zitten."},
+    {p:3, t:"Maak een foto waarin jullie allemaal een ingrediënt van een pizza uitbeelden. Eén iemand is natuurlijk de pizza zelf."}
+  ]},
+  { id:"r2", nav:"Ronde 2", title:"Ronde 2", place:"De Drie Ringen", time:"15:30", tasks:[
+    {p:1, t:"Maak een foto van iemand die zijn eerste slok neemt."},
+    {p:1, t:"Proostfoto."},
+    {p:2, t:"Maak een foto waarop twee teamleden arm in arm hun bier drinken."},
+    {p:2, t:"Maak een foto waarin één persoon duidelijk spijt heeft van zijn bierkeuze."},
+    {p:3, t:"Het laatste bier: beeld uit alsof dit het allerlaatste bier op aarde is en jullie er allemaal voor vechten."}
+  ]},
+  { id:"r3", nav:"Ronde 3", title:"Ronde 3", place:"Van Zanten", time:"17:30", tasks:[
+    {p:1, t:"Maak een foto alsof jullie zojuist de finish van een marathon hebben gehaald."},
+    {p:2, t:"Maak een foto waarop iedereen met een drankje zit."}
+  ]},
+  { id:"street", nav:"Onderweg", title:"Onderweg", place:"Fotografeer om je heen voor punten", intro:"Deze opdrachten doe je tijdens de hele route, tussen de stops door.", tasks:[
+    {p:1, t:"Een gek straatnaambord"},
+    {p:1, t:"Een gebouw met een torentje"},
+    {p:1, t:"Een bloem die aan een muur groeit"},
+    {p:1, t:"Een kat of hond op straat"},
+    {p:1, t:"Een straat met minimaal 5 fietsen"},
+    {p:1, t:"Iets waarvan jullie denken: “Waarom staat dit hier?”"},
+    {p:1, t:"Een raam met iets grappigs erin"},
+    {p:1, t:"Een terras met rode parasols"},
+    {p:1, t:"Een boot"},
+    {p:1, t:"Een foto van de Onze Lieve Vrouwetoren"},
+    {p:1, t:"Iets waarvan je niet weet wat het is"},
+    {p:2, t:"Iets dat eruitziet als een gezicht."},
+    {p:2, t:"Een foto waarin jullie teamleden allemaal dezelfde kleur aanraken."},
+    {p:2, t:"Een foto waarbij het lijkt alsof één teamlid de toren vasthoudt."},
+    {p:3, t:"Een foto waarin iemand uit jullie team ‘verdwijnt’ achter een object."},
+    {p:3, t:"De beste toeristenfoto: de meest overdreven ‘WIJ ZIJN OP VAKANTIE IN AMERSFOORT’-foto. (Waar zijn die selfiesticks?!)"},
+    {p:3, t:"Een extreme close-up van iets in de straat. Het andere team moet raden wat het is."}
+  ]}
+];
+ROUNDS.forEach(r => r.tasks.forEach((k,i) => k.id = r.id + "-" + (i+1)));
+
+const BONUS = [
+  {id:"b-creatief", label:"Creatiefste foto", p:3},
+  {id:"b-grappig", label:"Grappigste foto", p:3},
+  {id:"b-mooi", label:"Mooiste foto", p:3},
+  {id:"b-bier", label:"Beste bierfoto", p:3},
+  {id:"b-groep", label:"Beste groepsfoto", p:3},
+  {id:"b-finale", label:"Beste finale-foto", p:5}
+];
+
+const ALL_TASKS = ROUNDS.flatMap(r => r.tasks);
+const MAX = ALL_TASKS.reduce((s,k)=>s+k.p,0) + BONUS.reduce((s,b)=>s+b.p,0);
+
+/* ---------- state ---------- */
+const KEY = "amersfoort-fotobattle-v1";
+let state = {team:"", done:{}, bonus:{}};
+try { const raw = localStorage.getItem(KEY); if (raw) state = Object.assign(state, JSON.parse(raw)); } catch(e) {}
+function save(){ try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e) {} }
+
+/* ---------- photo store (IndexedDB, falls back to memory) ---------- */
+const mem = new Map();
+let dbPromise = null;
+function openDB(){
+  if (!dbPromise) dbPromise = new Promise((res, rej) => {
+    try {
+      const r = indexedDB.open("amersfoort-fotobattle", 1);
+      r.onupgradeneeded = () => r.result.createObjectStore("photos");
+      r.onsuccess = () => res(r.result);
+      r.onerror = () => rej(r.error);
+    } catch(e) { rej(e); }
+  });
+  return dbPromise;
+}
+async function idbOp(mode, fn){
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const tx = db.transaction("photos", mode);
+    const req = fn(tx.objectStore("photos"));
+    tx.oncomplete = () => res(req && req.result);
+    tx.onerror = () => rej(tx.error);
+  });
+}
+const photos = {
+  async put(k,v){ mem.set(k,v); try { await idbOp("readwrite", s => s.put(v,k)); } catch(e) {} },
+  async get(k){ if (mem.has(k)) return mem.get(k); try { const v = await idbOp("readonly", s => s.get(k)); if (v) mem.set(k,v); return v; } catch(e) { return undefined; } },
+  async del(k){ mem.delete(k); try { await idbOp("readwrite", s => s.delete(k)); } catch(e) {} },
+  async clear(){ mem.clear(); try { await idbOp("readwrite", s => s.clear()); } catch(e) {} }
+};
+const urls = {};
+function urlFor(id, blob){ if (urls[id]) URL.revokeObjectURL(urls[id]); urls[id] = blob ? URL.createObjectURL(blob) : null; return urls[id]; }
+
+async function shrink(file){
+  const src = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+    const max = 1000, s = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+    c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+    return await new Promise(res => c.toBlob(b => res(b || file), "image/jpeg", 0.78));
+  } catch(e) { return file; }
+  finally { URL.revokeObjectURL(src); }
+}
+
+/* ---------- render ---------- */
+const $ = s => document.querySelector(s);
+const check = '<svg viewBox="0 0 20 20" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10.5l4 4 8-9"/></svg>';
+const camIcon = '<svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>';
+
+function esc(s){ return s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])); }
+
+function taskRow(k){
+  const li = document.createElement("li");
+  li.className = "task"; li.dataset.id = k.id;
+  li.innerHTML =
+    '<label><input type="checkbox" data-task="'+k.id+'"><span class="box">'+check+'</span>' +
+    '<span class="txt">'+esc(k.t)+'</span>' +
+    '<span class="pts p'+k.p+'" aria-label="'+k.p+(k.p===1?" punt":" punten")+'">'+k.p+'</span></label>' +
+    '<button type="button" class="cam" data-photo="'+k.id+'" aria-label="Foto toevoegen">'+camIcon+'</button>';
+  return li;
+}
+
+function build(){
+  const host = $("#sections"), chips = $("#chips");
+  chips.innerHTML = '<a href="#route">Route</a>';
+  ROUNDS.forEach(r => {
+    const sec = document.createElement("section");
+    sec.id = r.id;
+    sec.innerHTML =
+      '<div class="sec-head"><h2>'+esc(r.title)+'<small>'+(r.time ? r.time+" bij " : "")+esc(r.place)+'</small></h2><span class="tally" data-tally="'+r.id+'"></span></div>' +
+      (r.intro ? '<p class="intro">'+esc(r.intro)+'</p>' : '');
+    const ul = document.createElement("ul"); ul.className = "tasks";
+    r.tasks.forEach(k => ul.appendChild(taskRow(k)));
+    sec.appendChild(ul); host.appendChild(sec);
+    chips.insertAdjacentHTML("beforeend", '<a href="#'+r.id+'" data-chip="'+r.id+'">'+esc(r.nav)+'<span class="n"></span></a>');
+  });
+  chips.insertAdjacentHTML("beforeend", '<a href="#bonus">Finale</a><a href="#eind">Eindscore</a>');
+
+  const bl = $("#bonusList");
+  BONUS.forEach(b => {
+    const li = document.createElement("li");
+    li.className = "task"; li.dataset.bonus = b.id;
+    li.innerHTML = '<label><input type="checkbox" data-bonus="'+b.id+'"><span class="box">'+check+'</span>' +
+      '<span class="txt">'+esc(b.label)+'</span><span class="pts '+(b.p===5?"p5":"p2")+'">+'+b.p+'</span></label>';
+    bl.appendChild(li);
+  });
+}
+
+function update(){
+  let tasks = 0, bonus = 0;
+  ROUNDS.forEach(r => {
+    let got = 0, max = 0, n = 0;
+    r.tasks.forEach(k => {
+      max += k.p;
+      const d = !!state.done[k.id];
+      if (d) { got += k.p; n++; }
+      const li = document.querySelector('.task[data-id="'+k.id+'"]');
+      li.classList.toggle("is-done", d);
+      li.querySelector("input").checked = d;
+    });
+    tasks += got;
+    document.querySelector('[data-tally="'+r.id+'"]').textContent = got + " van " + max + " punten";
+    const chip = document.querySelector('[data-chip="'+r.id+'"]');
+    chip.querySelector(".n").textContent = n + "/" + r.tasks.length;
+    chip.classList.toggle("full", n === r.tasks.length);
+  });
+  BONUS.forEach(b => {
+    const d = !!state.bonus[b.id];
+    if (d) bonus += b.p;
+    const li = document.querySelector('[data-bonus="'+b.id+'"]').closest(".task");
+    li.classList.toggle("is-done", d);
+    li.querySelector("input").checked = d;
+  });
+  $("#bonusTally").textContent = bonus + " punten";
+  const total = tasks + bonus;
+  $("#barScore").textContent = total;
+  $("#finalScore").textContent = total;
+  $("#fTasks").textContent = tasks;
+  $("#fBonus").textContent = bonus;
+  $("#fPhotos").textContent = Object.values(urls).filter(Boolean).length;
+  $("#barTeam").textContent = state.team || "Nog geen naam";
+  const lvl = Math.min(1, total / MAX);
+  $("#beer").style.transform = "translateY(" + (lvl === 0 ? 60 : (4 + (1 - lvl) * 50 - 6)) + "px)";
+}
+
+function setThumb(id, url){
+  const btn = document.querySelector('[data-photo="'+id+'"]');
+  if (!btn) return;
+  if (url) { btn.innerHTML = '<img alt="">'; btn.firstChild.src = url; btn.setAttribute("aria-label","Foto bekijken"); }
+  else { btn.innerHTML = camIcon; btn.setAttribute("aria-label","Foto toevoegen"); }
+}
+
+let toastT;
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove("show"), 1800); }
+
+/* ---------- events ---------- */
+build();
+
+const teamInput = $("#teamName");
+teamInput.value = state.team || "";
+teamInput.addEventListener("input", () => { state.team = teamInput.value.trim(); save(); update(); });
+
+document.addEventListener("change", e => {
+  const t = e.target;
+  if (t.dataset.task) {
+    state.done[t.dataset.task] = t.checked;
+    if (!t.checked) delete state.done[t.dataset.task];
+    save(); update();
+    if (t.checked) { const k = ALL_TASKS.find(x => x.id === t.dataset.task); toast("+" + k.p + (k.p === 1 ? " punt" : " punten")); }
+  } else if (t.dataset.bonus) {
+    if (t.checked) state.bonus[t.dataset.bonus] = true; else delete state.bonus[t.dataset.bonus];
+    save(); update();
+    if (t.checked) toast("Bonus binnen!");
+  }
+});
+
+const fileInput = $("#fileInput");
+let photoTarget = null;
+const dlg = $("#dlg");
+
+document.addEventListener("click", async e => {
+  const btn = e.target.closest("[data-photo]");
+  if (!btn) return;
+  photoTarget = btn.dataset.photo;
+  if (urls[photoTarget]) {
+    const k = ALL_TASKS.find(x => x.id === photoTarget);
+    $("#dlgImg").src = urls[photoTarget];
+    $("#dlgText").textContent = k.t;
+    if (dlg.showModal) dlg.showModal(); else dlg.setAttribute("open","");
+  } else {
+    fileInput.value = ""; fileInput.click();
+  }
+});
+
+fileInput.addEventListener("change", async () => {
+  const f = fileInput.files && fileInput.files[0];
+  if (!f || !photoTarget) return;
+  const id = photoTarget;
+  const blob = await shrink(f);
+  await photos.put(id, blob);
+  setThumb(id, urlFor(id, blob));
+  if (!state.done[id]) { state.done[id] = true; save(); const k = ALL_TASKS.find(x => x.id === id); toast("Foto toegevoegd, +" + k.p); }
+  else toast("Foto toegevoegd");
+  update();
+});
+
+function closeDlg(){ if (dlg.close) dlg.close(); else dlg.removeAttribute("open"); }
+$("#dlgClose").addEventListener("click", closeDlg);
+$("#dlgReplace").addEventListener("click", () => { closeDlg(); fileInput.value = ""; fileInput.click(); });
+$("#dlgDelete").addEventListener("click", async () => {
+  const id = photoTarget; closeDlg();
+  await photos.del(id); urlFor(id, null); setThumb(id, null); update(); toast("Foto verwijderd");
+});
+
+const resetBtn = $("#reset");
+let armT;
+resetBtn.addEventListener("click", async () => {
+  if (!resetBtn.classList.contains("armed")) {
+    resetBtn.classList.add("armed"); resetBtn.textContent = "Tik nogmaals om alles te wissen";
+    armT = setTimeout(() => { resetBtn.classList.remove("armed"); resetBtn.textContent = "Alles wissen en opnieuw beginnen"; }, 4000);
+    return;
+  }
+  clearTimeout(armT);
+  state = {team:"", done:{}, bonus:{}}; save();
+  await photos.clear();
+  Object.keys(urls).forEach(id => { urlFor(id, null); setThumb(id, null); });
+  teamInput.value = "";
+  resetBtn.classList.remove("armed"); resetBtn.textContent = "Alles wissen en opnieuw beginnen";
+  update(); toast("Alles gewist"); window.scrollTo(0,0);
+});
+
+update();
+
+/* load stored photos */
+(async () => {
+  for (const k of ALL_TASKS) {
+    const b = await photos.get(k.id);
+    if (b) setThumb(k.id, urlFor(k.id, b));
+  }
+  update();
+})();
+</script>
+</body>
+</html>
